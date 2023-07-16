@@ -24,3 +24,7 @@ allNeighborhoods.features.map((feature) => {
 
   neighborhoodMap.set(neighborhoodName, neighborhoodObject);
 });
+
+Array.from(neighborhoodMap.values()).map((neighborhood) =>
+  neighborhood.leafletPolygon.bindPopup(`<b>${neighborhood.name}</b>`)
+);
