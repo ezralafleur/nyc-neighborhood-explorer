@@ -23,11 +23,13 @@ let neighborhoodMap = new Map();
 allNeighborhoods.features.map((feature) => {
   let neighborhoodName = feature.properties.NTAName;
   let neighborhoodCoords = swapCoords(feature.geometry.coordinates[0]);
+  let neighborhoodBorough = feature.properties.BoroName;
 
-  let boroughColor = boroughColors.get(feature.properties.BoroName);
+  let boroughColor = boroughColors.get(neighborhoodBorough);
 
   let neighborhoodObject = {
     name: neighborhoodName,
+    borough: neighborhoodBorough,
     coordinates: neighborhoodCoords,
     leafletPolygon: L.polygon(neighborhoodCoords, {
       color: boroughColor,
@@ -40,6 +42,11 @@ allNeighborhoods.features.map((feature) => {
   neighborhoodMap.set(neighborhoodName, neighborhoodObject);
 });
 
+function createPopupContents(neighborhood) {
+  return `<b>${neighborhood.name}</b>
+    <br>${neighborhood.borough}`;
+}
+
 Array.from(neighborhoodMap.values()).map((neighborhood) =>
-  neighborhood.leafletPolygon.bindPopup(`<b>${neighborhood.name}</b>`)
+  neighborhood.leafletPolygon.bindPopup(createPopupContents(neighborhood))
 );
