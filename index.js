@@ -1,3 +1,11 @@
+const boroughColors = new Map([
+  ["Manhattan", "#526DFF"],
+  ["Brooklyn", "#FF7B18"],
+  ["Queens", "#2A6D8E"],
+  ["Bronx", "#B14B11"],
+  ["Staten Island", "#227252"],
+]);
+
 var map = L.map("map").setView([40.693, -73.925], 10);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
@@ -16,10 +24,17 @@ allNeighborhoods.features.map((feature) => {
   let neighborhoodName = feature.properties.NTAName;
   let neighborhoodCoords = swapCoords(feature.geometry.coordinates[0]);
 
+  let boroughColor = boroughColors.get(feature.properties.BoroName);
+
   let neighborhoodObject = {
     name: neighborhoodName,
     coordinates: neighborhoodCoords,
-    leafletPolygon: L.polygon(neighborhoodCoords).addTo(map),
+    leafletPolygon: L.polygon(neighborhoodCoords, {
+      color: boroughColor,
+      weight: 1,
+      fillColor: boroughColor,
+      fillOpacity: 0.5,
+    }).addTo(map),
   };
 
   neighborhoodMap.set(neighborhoodName, neighborhoodObject);
