@@ -13,16 +13,11 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 
-function swapCoords(coordinateList) {
-  let swappedCoords = coordinateList.map((coord) => [coord[1], coord[0]]);
-  return swappedCoords;
-}
-
 let neighborhoodMap = new Map();
 
 allNeighborhoods.features.map((feature) => {
   let neighborhoodName = feature.properties.NTAName;
-  let neighborhoodCoords = swapCoords(feature.geometry.coordinates[0]);
+  let neighborhoodCoords = feature.geometry.coordinates;
   let neighborhoodBorough = feature.properties.BoroName;
 
   let boroughColor = boroughColors.get(neighborhoodBorough);
@@ -31,12 +26,15 @@ allNeighborhoods.features.map((feature) => {
     name: neighborhoodName,
     borough: neighborhoodBorough,
     coordinates: neighborhoodCoords,
-    leafletPolygon: L.polygon(neighborhoodCoords, {
-      color: boroughColor,
-      weight: 1,
-      fillColor: boroughColor,
-      fillOpacity: 0.5,
-    }).addTo(map),
+    leafletPolygon: L.polygon(
+      L.GeoJSON.coordsToLatLngs(neighborhoodCoords, 1),
+      {
+        color: boroughColor,
+        weight: 1,
+        fillColor: boroughColor,
+        fillOpacity: 0.5,
+      }
+    ).addTo(map),
   };
 
   neighborhoodMap.set(neighborhoodName, neighborhoodObject);
